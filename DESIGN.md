@@ -7,8 +7,9 @@ Night Signal adapts the restrained Pen composition into Snack Overflow colors.
 
 - First view: Build Wheel identity, a category control, one large
   waiting-state title, and one clear Spin button.
-- After spin: selected idea, one-sentence build premise, truthful random label,
-  share action, and clear path for the next person to spin.
+- After spin: selected idea, one-sentence build premise, a grouped action row
+  with the one-minute timer as the highlighted center action, share action, and
+  a clear path for the next person to spin.
 - Footer: the series contract; six text-only platform links live in the header.
 
 ## System

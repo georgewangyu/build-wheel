@@ -263,10 +263,10 @@ export function BuildWheel() {
 
         <div className="action-area">
           <div className="actions">
-            <button type="button" className="primary-action" onClick={spin} disabled={drawing}>{drawing ? 'Drawing…' : selected ? 'Spin again' : 'Spin'}</button>
+            <button type="button" className={selected ? 'secondary-action' : 'primary-action'} onClick={spin} disabled={drawing}>{drawing ? 'Drawing…' : selected ? 'Spin again' : 'Spin'}</button>
+            <button type="button" className={selected ? 'primary-action timer-action' : 'secondary-action timer-action'} onClick={startTimer} disabled={!selected || drawing}>Start 1 min timer</button>
             <button type="button" className="secondary-action" onClick={shareResult} disabled={!selected || drawing}>Share result</button>
           </div>
-          <button type="button" className="timer-launch" onClick={startTimer} disabled={!selected || drawing}>Start 1 min timer</button>
           <p className="fairness-note">{creatorTake ? 'ONE MINUTE TO EXPLAIN · SEVEN DAYS TO BUILD' : `${selected ? 'NEXT SPIN' : 'RANDOM DRAW'} · EQUAL CHANCE AMONG ${pool.length} IDEAS`}</p>
           <button type="button" className="sound-toggle" aria-pressed={soundOn} onClick={toggleSound}>{soundOn ? 'Sound on' : 'Sound off'}</button>
           {shareStatus && <p className="share-status" role="status">{shareStatus}</p>}
