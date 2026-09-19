@@ -1,6 +1,12 @@
 {
   "redirects": [
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "build-wheel.vercel.app" }],
+      "destination": "https://buildwheel.snackoverflowgeorge.com/",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "build-wheel.vercel.app" }],
       "destination": "https://buildwheel.snackoverflowgeorge.com/:path*",
