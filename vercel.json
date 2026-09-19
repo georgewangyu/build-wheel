@@ -1,4 +1,10 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/leaderboard", "destination": "/index.html" },
+    { "source": "/harnesses/:slug", "destination": "/index.html" }
+  ],
   "redirects": [
     {
       "source": "/",

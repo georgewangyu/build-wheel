@@ -16,7 +16,7 @@ test('random selection rejects out-of-range samples without bias', () => {
   assert.throws(() => randomIndex(0, () => 0), RangeError);
 });
 
-test('shared result URLs preserve the exact topic without a draw mode', () => {
+test('direct result URLs preserve the exact topic without a draw mode', () => {
   assert.equal(resultUrl('https://buildwheel.snackoverflowgeorge.com', topics[4].slug),
     'https://buildwheel.snackoverflowgeorge.com/?idea=voice-only-social-app');
   assert.equal(resultUrl('https://buildwheel.snackoverflowgeorge.com', topics[0].slug),
@@ -25,7 +25,7 @@ test('shared result URLs preserve the exact topic without a draw mode', () => {
 
 test('first-video creator result remains visibly attributable in its URL', () => {
   assert.equal(FIRST_VIDEO_SLUG, topics[0].slug);
-  assert.equal(topics[0].title, 'My AI Runs an AI Team');
+  assert.equal(topics[0].title, 'AI Agent Harness');
   assert.equal(CREATOR_TAKE, 'first-video');
   assert.equal(resultUrl('https://buildwheel.snackoverflowgeorge.com', FIRST_VIDEO_SLUG, true),
     'https://buildwheel.snackoverflowgeorge.com/?idea=personal-ai-operator-agent-harness&creator=first-video');

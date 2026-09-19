@@ -3,6 +3,7 @@ import { topics, type Topic } from './topics.ts';
 import { CREATOR_TAKE, FIRST_VIDEO_SLUG, randomIndex, resultUrl } from './wheel-logic.ts';
 import { playResult, playTick, playTimerAlarm } from './spin-sound.ts';
 import { SPEECH_SECONDS, secondsRemaining, speechPhase, timerLabel } from './timer.ts';
+import { SiteHeader } from './site-header.tsx';
 
 type Category = Topic['category'] | 'All ideas';
 
@@ -40,10 +41,7 @@ export function BuildWheel() {
   const [soundOn, setSoundOn] = useState(readSoundPreference);
   const [drawing, setDrawing] = useState(false);
   const [rollingTopic, setRollingTopic] = useState<Topic | null>(null);
-  const [sharedResult, setSharedResult] = useState(Boolean(initial.idea));
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [shareStatus, setShareStatus] = useState('');
-  const [showFallbackLink, setShowFallbackLink] = useState(false);
   const [timerDeadline, setTimerDeadline] = useState<number | null>(null);
   const [remainingSeconds, setRemainingSeconds] = useState(SPEECH_SECONDS);
   const timerEndPlayedRef = useRef(false);
@@ -52,7 +50,6 @@ export function BuildWheel() {
   const audioRef = useRef<AudioContext | null>(null);
   const soundOnRef = useRef(soundOn);
   const pool = creatorTake ? topics.filter((topic) => topic.slug === FIRST_VIDEO_SLUG) : category === 'All ideas' ? topics : topics.filter((topic) => topic.category === category);
-  const shareUrl = selected ? resultUrl(window.location.origin, selected.slug, creatorTake) : '';
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -72,9 +69,6 @@ export function BuildWheel() {
       setCategory('All ideas');
       setDrawing(false);
       setRollingTopic(null);
-      setSharedResult(Boolean(state.idea));
-      setShareStatus('');
-      setShowFallbackLink(false);
       setTimerDeadline(null);
     };
     window.addEventListener('popstate', onPopState);
@@ -139,9 +133,6 @@ export function BuildWheel() {
     setCategory(nextCategory);
     setSelected(null);
     setRollingTopic(null);
-    setSharedResult(false);
-    setShareStatus('');
-    setShowFallbackLink(false);
     setTimerDeadline(null);
     window.history.replaceState({}, '', '/');
   }
@@ -160,9 +151,6 @@ export function BuildWheel() {
     }
 
     setSelected(null);
-    setSharedResult(false);
-    setShareStatus('');
-    setShowFallbackLink(false);
     setTimerDeadline(null);
     setDrawing(true);
     setRollingTopic(rollingPool[0]);
@@ -190,73 +178,29 @@ export function BuildWheel() {
     }, duration);
   }
 
-  async function shareResult() {
-    if (!selected) return;
-    const data = {
-      title: `Build Wheel: ${selected.title}`,
-      text: `I got ${selected.title}. One minute to explain it, seven days to build it. What would you get?`,
-      url: shareUrl,
-    };
-
-    if (navigator.share) {
-      try {
-        await navigator.share(data);
-        setShareStatus('Result shared');
-        return;
-      } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') return;
-      }
-    }
-
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setShareStatus('Link copied');
-    } catch {
-      setShowFallbackLink(true);
-      setShareStatus('Select and copy the link below');
-    }
-  }
-
   const status = drawing ? 'DRAWING…' : selected
-    ? sharedResult ? 'SHARED BUILD' : 'YOUR BUILD'
+    ? creatorTake ? '' : 'YOUR BUILD'
     : 'READY TO DRAW';
   const title = drawing ? rollingTopic?.title ?? 'Drawing…' : selected?.title ?? 'Waiting Room';
 
   return (
     <>
     <div className="app-shell" inert={timerDeadline !== null}>
-      <header className="masthead">
-        <div className="brand-group">
-          <p className="eyebrow">SNACKOVERFLOW&nbsp; / &nbsp;BUILD SERIES</p>
-          <a className="brand" href="/">Build Wheel</a>
-          <p className="byline">made by <a href="https://www.instagram.com/snackoverflowgeorge/" target="_blank" rel="noopener noreferrer">@snackoverflowgeorge</a></p>
-        </div>
-        <nav className="social-nav" aria-label="Follow the build">
-          <p className="eyebrow">FOLLOW THE BUILD</p>
-          <div className="social-links">
-            <a href="https://github.com/georgewangyu" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href="https://www.instagram.com/snackoverflowgeorge/" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a href="https://www.tiktok.com/@snackoverflowgeorge" target="_blank" rel="noopener noreferrer">TikTok</a>
-            <a href="https://www.youtube.com/@snackoverflowgeorge" target="_blank" rel="noopener noreferrer">YouTube</a>
-            <a href="https://x.com/georgewangyu" target="_blank" rel="noopener noreferrer">X</a>
-            <a href="https://www.linkedin.com/in/georgewangyu/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          </div>
-        </nav>
-      </header>
+      <SiteHeader active="wheel" />
 
       <main className="main-area">
         <div className="setup">
-          <p className="mode-description">One minute to explain the idea. Seven days to ship a real version.</p>
+          <p className="mode-description">One minute to explain the topic. Seven days to build something real.</p>
           <div className="category-field">
-            <label htmlFor="category">BUILD IDEAS</label>
+            <label htmlFor="category">TOPIC NICHE</label>
             <select id="category" value={category} onChange={(event) => changeCategory(event.target.value as Category)} disabled={drawing}>
-              {categories.map((option) => <option key={option} value={option}>{option}</option>)}
+              {categories.map((option) => <option key={option} value={option}>{option === 'All ideas' ? 'All topics' : option === 'AI systems' ? 'Tech / AI' : option}</option>)}
             </select>
           </div>
         </div>
 
         <section className={`draw-area${drawing ? ' is-drawing' : ''}`} aria-labelledby="draw-title">
-          <p className="draw-status">{status}</p>
+          {status && <p className="draw-status">{status}</p>}
           <h1 id="draw-title" aria-live={drawing ? 'off' : 'polite'}>{title}</h1>
           {selected && <p className="idea-prompt">{selected.prompt}</p>}
         </section>
@@ -265,12 +209,9 @@ export function BuildWheel() {
           <div className="actions">
             <button type="button" className={selected ? 'secondary-action' : 'primary-action'} onClick={spin} disabled={drawing}>{drawing ? 'Drawing…' : selected ? 'Spin again' : 'Spin'}</button>
             <button type="button" className={selected ? 'primary-action timer-action' : 'secondary-action timer-action'} onClick={startTimer} disabled={!selected || drawing}>Start 1 min timer</button>
-            <button type="button" className="secondary-action" onClick={shareResult} disabled={!selected || drawing}>Share result</button>
           </div>
-          <p className="fairness-note">{creatorTake ? 'ONE MINUTE TO EXPLAIN · SEVEN DAYS TO BUILD' : `${selected ? 'NEXT SPIN' : 'RANDOM DRAW'} · EQUAL CHANCE AMONG ${pool.length} IDEAS`}</p>
+          <p className="fairness-note">{creatorTake ? 'ONE MINUTE TO EXPLAIN · SEVEN DAYS TO BUILD' : `${selected ? 'NEXT SPIN' : 'RANDOM DRAW'} · EQUAL CHANCE AMONG ${pool.length} TOPICS`}</p>
           <button type="button" className="sound-toggle" aria-pressed={soundOn} onClick={toggleSound}>{soundOn ? 'Sound on' : 'Sound off'}</button>
-          {shareStatus && <p className="share-status" role="status">{shareStatus}</p>}
-          {showFallbackLink && <input className="fallback-link" aria-label="Exact result link" readOnly value={shareUrl} onFocus={(event) => event.currentTarget.select()} />}
         </div>
       </main>
 

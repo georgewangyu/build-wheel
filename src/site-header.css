@@ -1,0 +1,18 @@
+.site-header { --site-ink: #f2eee5; --site-purple: #a99afa; min-height: 91px; position: relative; z-index: 5; display: grid; grid-template-columns: minmax(140px, 1fr) auto minmax(280px, 1fr); align-items: center; gap: 20px; border-top: 5px solid #7c6feb; border-bottom: 1px solid #45443f; padding: 13px max(28px, calc((100vw - 1270px) / 2)); color: var(--site-ink); background: #20201f; }
+.site-header a { text-decoration: none; }
+.site-brand { width: max-content; display: flex; align-items: center; gap: 10px; color: var(--site-ink); font-size: 12px; font-weight: 800; letter-spacing: -.045em; line-height: .98; }
+.site-brand-mark { color: var(--site-purple); font-size: 39px; line-height: 1; }
+.site-nav { display: flex; gap: 8px; padding: 5px; border: 1px solid #41403d; border-radius: 999px; background: #272725; }
+.site-nav a { padding: 11px 20px; border-radius: 999px; color: #bdbbb5; font-size: 12px; font-weight: 700; transition: color .2s, background .2s; white-space: nowrap; }
+.site-nav a:hover { color: #fff; }
+.site-nav a.is-active { background: var(--site-ink); color: #22221e; }
+.site-creator { justify-self: end; text-align: right; }
+.site-creator p { margin: 0 0 6px; color: #a7a49e; font: 600 10px 'IBM Plex Mono', monospace; letter-spacing: .1em; white-space: nowrap; }
+.site-creator p a { color: #e4d9ff; }
+.site-creator p a:hover { color: #fff; }
+.site-creator nav { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 6px 12px; }
+.site-creator nav a { color: #bebbb5; font-size: 11px; font-weight: 600; }
+.site-creator nav a:hover { color: var(--site-purple); }
+@media (max-width: 900px) { .site-header { grid-template-columns: 1fr auto; gap: 13px; padding: 13px 18px 15px; } .site-brand { font-size: 11px; } .site-brand-mark { font-size: 32px; } .site-nav { grid-row: 2; grid-column: 1 / -1; justify-self: center; } .site-nav a { padding: 10px 15px; font-size: 11px; } .site-creator { grid-column: 2; grid-row: 1; } .site-creator nav { max-width: 220px; } }
+@media (max-width: 500px) { .site-header { grid-template-columns: 1fr; } .site-creator { grid-column: 1; grid-row: 2; justify-self: start; text-align: left; } .site-creator nav { max-width: none; justify-content: flex-start; } .site-nav { grid-row: 3; width: 100%; justify-content: center; } }
+@media (max-width: 380px) { .site-nav a { padding: 9px 11px; font-size: 10px; } .site-creator nav { gap: 6px 10px; } }
