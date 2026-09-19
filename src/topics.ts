@@ -9,7 +9,7 @@ export type Topic = {
 
 // Public display copy only. IDs and slugs are stable keys for shared results.
 export const topics: readonly Topic[] = [
-  { id: 'launch-ai-01', slug: 'personal-ai-operator-agent-harness', title: 'Personal AI Operator / Agent Harness', wheelLabel: 'AI OPERATOR', category: 'AI systems', prompt: 'An AI manager that delegates work to specialist agents.' },
+  { id: 'launch-ai-01', slug: 'personal-ai-operator-agent-harness', title: 'My AI Runs an AI Team', wheelLabel: 'AI TEAM', category: 'AI systems', prompt: 'Give one AI the job of delegating to specialist agents and bringing their work back together.' },
   { id: 'launch-ai-02', slug: 'ai-memory-life-os', title: 'AI Memory / Life OS', wheelLabel: 'AI MEMORY', category: 'AI systems', prompt: 'Search conversations, photos, locations, notes, and decisions as one memory system.' },
   { id: 'launch-ai-03', slug: 'ai-research-radar', title: 'AI Research Radar', wheelLabel: 'RESEARCH RADAR', category: 'AI systems', prompt: 'Continuously find emerging technologies, creators, products, and trends before they become obvious.' },
   { id: 'launch-ai-04', slug: 'ai-video-editor', title: 'AI Video Editor', wheelLabel: 'AI VIDEO EDITOR', category: 'AI systems', prompt: 'Turn raw footage into a structured first cut with captions, music, and visual assets.' },

@@ -283,7 +283,7 @@ export function BuildWheel() {
       <div className="timer-overlay" role="dialog" aria-modal="true" aria-label="Speech timer">
         <p className="timer-topic">{selected?.title}</p>
         <div className="speech-arc" aria-label="Speaking arc">
-          {['What?', 'So what?', 'Now what?'].map((label, index) => (
+          {['The idea', 'Why it matters', "What I'd build"].map((label, index) => (
             <span key={label} className={remainingSeconds > 0 && speechPhase(remainingSeconds) === index ? 'is-current' : ''}>{label}</span>
           ))}
         </div>

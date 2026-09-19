@@ -25,6 +25,7 @@ test('shared result URLs preserve the exact topic without a draw mode', () => {
 
 test('first-video creator result remains visibly attributable in its URL', () => {
   assert.equal(FIRST_VIDEO_SLUG, topics[0].slug);
+  assert.equal(topics[0].title, 'My AI Runs an AI Team');
   assert.equal(CREATOR_TAKE, 'first-video');
   assert.equal(resultUrl('https://buildwheel.snackoverflowgeorge.com', FIRST_VIDEO_SLUG, true),
     'https://buildwheel.snackoverflowgeorge.com/?idea=personal-ai-operator-agent-harness&creator=first-video');
