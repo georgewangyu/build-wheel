@@ -13,7 +13,10 @@ test('harness leaderboard contains only unique public GitHub repositories', () =
   assert.ok(harnesses.every((item) => item.description.length > 50 && item.highlights.length >= 3));
   assert.ok(harnesses.some((item) => item.repo === 'openclaw/openclaw'));
   assert.ok(harnesses.some((item) => item.repo === 'NousResearch/hermes-agent'));
-  assert.ok(harnesses.every((item) => !item.repo.toLowerCase().includes('jarvis')));
+  const jarvis = harnesses.find((item) => item.repo === 'georgewangyu/JarvisAIGeorge');
+  assert.equal(jarvis?.snapshotStars, 0);
+  assert.equal(jarvis?.slug, 'jarvis-ai-george');
+  assert.equal(rankHarnesses().at(-1)?.slug, 'jarvis-ai-george');
 });
 
 test('ranking follows live counts and leaves the curated source order unchanged', () => {

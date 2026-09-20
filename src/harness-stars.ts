@@ -1,6 +1,6 @@
 import { harnesses, type StarCounts } from './harnesses.ts';
 
-const CACHE_KEY = 'build-wheel:harness-stars:v2';
+const CACHE_KEY = 'build-wheel:harness-stars:v3';
 const CACHE_MAX_AGE_MS = 20 * 60 * 1000;
 
 type CachedStars = { fetchedAt: number; counts: StarCounts };
