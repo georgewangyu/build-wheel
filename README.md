@@ -31,6 +31,10 @@ Open the URL printed by Vite. No account or environment variables are needed.
 - An unlisted filming URL for the first video lands on a pinned topic without
   a separate on-screen mode label. It is not linked in the public UI or sitemap.
   An unlisted URL is not access control.
+- Local preview builds may load an optional `creator-series.json` placed next
+  to the built `index.html`. Each record supplies an unlisted `creator` take;
+  the public draw still uses only `src/topics.ts`. Production builds do not
+  include a creator catalog by default.
 - Browser state is local only. No user input, analytics, or personal data is
   collected by the app.
 

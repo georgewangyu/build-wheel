@@ -23,9 +23,9 @@ function browserRandom32(): number {
 export const FIRST_VIDEO_SLUG = 'personal-ai-operator-agent-harness';
 export const CREATOR_TAKE = 'first-video';
 
-export function resultUrl(origin: string, slug: string, creatorTake = false): string {
+export function resultUrl(origin: string, slug: string, creatorTake: string | null = null): string {
   const url = new URL('/', origin);
   url.searchParams.set('idea', slug);
-  if (creatorTake) url.searchParams.set('creator', CREATOR_TAKE);
+  if (creatorTake) url.searchParams.set('creator', creatorTake);
   return url.toString();
 }

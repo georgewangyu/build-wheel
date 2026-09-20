@@ -9,6 +9,7 @@ import '@fontsource/ibm-plex-mono/latin-600.css';
 import { BuildWheel } from './wheel-app.tsx';
 import { HarnessBoard } from './harness-board.tsx';
 import { harnesses } from './harnesses.ts';
+import { loadCreatorSeries } from './creator-series.ts';
 import './styles.css';
 
 function CurrentPage() {
@@ -21,8 +22,10 @@ function CurrentPage() {
   return <BuildWheel />;
 }
 
-createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <CurrentPage />
-  </React.StrictMode>,
-);
+void loadCreatorSeries().then(() => {
+  createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <CurrentPage />
+    </React.StrictMode>,
+  );
+});

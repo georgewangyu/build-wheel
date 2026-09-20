@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { topics, type Topic } from './topics.ts';
+import { creatorTopic } from './creator-series.ts';
 import { CREATOR_TAKE, FIRST_VIDEO_SLUG, randomIndex, resultUrl } from './wheel-logic.ts';
 import { playResult, playTick, playTimerAlarm } from './spin-sound.ts';
 import { SPEECH_SECONDS, secondsRemaining, speechPhase, timerLabel } from './timer.ts';
@@ -13,7 +14,11 @@ const categories: readonly Category[] = [
 
 function readUrlState() {
   const params = new URLSearchParams(window.location.search);
-  const creatorTake = params.get('creator') === CREATOR_TAKE;
+  const requestedTake = params.get('creator');
+  const creatorTake = requestedTake === CREATOR_TAKE || creatorTopic(requestedTake) ? requestedTake : null;
+  const pinnedTopic = creatorTake === CREATOR_TAKE
+    ? topics.find((topic) => topic.slug === FIRST_VIDEO_SLUG) ?? null
+    : creatorTopic(creatorTake);
   if (params.has('mode')) {
     params.delete('mode');
     const query = params.toString();
@@ -21,7 +26,9 @@ function readUrlState() {
   }
   return {
     creatorTake,
-    idea: topics.find((topic) => topic.slug === params.get('idea') && (!creatorTake || topic.slug === FIRST_VIDEO_SLUG)) ?? null,
+    idea: creatorTake
+      ? params.get('idea') === pinnedTopic?.slug ? pinnedTopic : null
+      : topics.find((topic) => topic.slug === params.get('idea')) ?? null,
   };
 }
 
@@ -35,7 +42,7 @@ function readSoundPreference() {
 
 export function BuildWheel() {
   const [initial] = useState(readUrlState);
-  const [creatorTake, setCreatorTake] = useState(initial.creatorTake);
+  const [creatorTake, setCreatorTake] = useState<string | null>(initial.creatorTake);
   const [selected, setSelected] = useState<Topic | null>(initial.idea);
   const [category, setCategory] = useState<Category>('All ideas');
   const [soundOn, setSoundOn] = useState(readSoundPreference);
@@ -49,7 +56,9 @@ export function BuildWheel() {
   const timeoutRef = useRef<number | undefined>(undefined);
   const audioRef = useRef<AudioContext | null>(null);
   const soundOnRef = useRef(soundOn);
-  const pool = creatorTake ? topics.filter((topic) => topic.slug === FIRST_VIDEO_SLUG) : category === 'All ideas' ? topics : topics.filter((topic) => topic.category === category);
+  const pool = creatorTake
+    ? [creatorTake === CREATOR_TAKE ? topics[0] : creatorTopic(creatorTake)!]
+    : category === 'All ideas' ? topics : topics.filter((topic) => topic.category === category);
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -129,7 +138,7 @@ export function BuildWheel() {
   }
 
   function changeCategory(nextCategory: Category) {
-    setCreatorTake(false);
+    setCreatorTake(null);
     setCategory(nextCategory);
     setSelected(null);
     setRollingTopic(null);
@@ -154,7 +163,7 @@ export function BuildWheel() {
     setTimerDeadline(null);
     setDrawing(true);
     setRollingTopic(rollingPool[0]);
-    window.history.replaceState({}, '', creatorTake ? `/?creator=${CREATOR_TAKE}` : '/');
+    window.history.replaceState({}, '', creatorTake ? `/?creator=${creatorTake}` : '/');
 
     if (!reducedMotion) {
       intervalRef.current = window.setInterval(() => {
@@ -191,12 +200,12 @@ export function BuildWheel() {
       <main className="main-area">
         <div className="setup">
           <p className="mode-description">One minute to explain the topic. Seven days to build something real.</p>
-          <div className="category-field">
+          {!creatorTake && <div className="category-field">
             <label htmlFor="category">TOPIC NICHE</label>
             <select id="category" value={category} onChange={(event) => changeCategory(event.target.value as Category)} disabled={drawing}>
               {categories.map((option) => <option key={option} value={option}>{option === 'All ideas' ? 'All topics' : option === 'AI systems' ? 'Tech / AI' : option}</option>)}
             </select>
-          </div>
+          </div>}
         </div>
 
         <section className={`draw-area${drawing ? ' is-drawing' : ''}`} aria-labelledby="draw-title">
