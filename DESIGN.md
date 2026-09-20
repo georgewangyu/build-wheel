@@ -16,6 +16,8 @@ Night Signal adapts the restrained Pen composition into Snack Overflow colors.
 
 - Charcoal `#201f20`, white `#faf9ff`, lavender `#a89df6`, and purple
   `#7c6feb`. No gradient or decorative cards.
+- The selected Companion Signal mark appears in the site header and favicon;
+  the pale-lavender header tile preserves its dark outline against charcoal.
 - Display and body: Inter; utility labels: IBM Plex Mono.
 - No cards or navigation maze. Use alignment, type scale, and negative space
   for hierarchy.

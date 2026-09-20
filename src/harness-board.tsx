@@ -38,7 +38,7 @@ function RankRow({ item, rank, stars, index }: { item: Harness; rank: number; st
 
 function GeorgeSpotlight({ item, stars, rank }: { item: Harness; stars: number; rank: number }) {
   return <aside className="george-spotlight">
-    <span className="spotlight-symbol" aria-hidden="true">✳</span>
+    <span className="spotlight-symbol" aria-hidden="true"><img src="/companion-signal.svg" alt="" /></span>
     <div className="spotlight-copy">
       <p className="board-kicker">THE BUILDER'S HARNESS</p>
       <h2><a href={`/harnesses/${item.slug}`}>{item.name} <span aria-hidden="true">↗</span></a></h2>

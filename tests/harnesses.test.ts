@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
 import { githubUrl, harnesses, rankHarnesses } from '../src/harnesses.ts';
 
 test('harness leaderboard contains only unique public GitHub repositories', () => {
@@ -9,7 +10,8 @@ test('harness leaderboard contains only unique public GitHub repositories', () =
   assert.ok(harnesses.every((item) => /^[\w.-]+\/[\w.-]+$/.test(item.repo)));
   assert.ok(harnesses.every((item) => item.snapshotStars >= 0));
   assert.ok(harnesses.every((item) => githubUrl(item.repo).startsWith('https://github.com/')));
-  assert.ok(harnesses.every((item) => new URL(item.icon).protocol === 'https:'));
+  assert.ok(harnesses.every((item) => item.icon === '/companion-signal.svg' || new URL(item.icon).protocol === 'https:'));
+  assert.ok(existsSync(new URL('../public/companion-signal.svg', import.meta.url)));
   assert.ok(harnesses.every((item) => item.description.length > 50 && item.highlights.length >= 3));
   assert.ok(harnesses.some((item) => item.repo === 'openclaw/openclaw'));
   assert.ok(harnesses.some((item) => item.repo === 'NousResearch/hermes-agent'));

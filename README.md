@@ -13,6 +13,10 @@ one-minute speech countdown opens with a distinct end alarm. The result has a
 stable share URL, and someone opening it can see the same idea and spin for
 their own.
 
+The site header and favicon use the Companion Signal mark, selected from the
+JarvisAIGeorge logo exploration. The bundled SVG contains only public-safe
+vector geometry and palette values; private design notes stay outside this repo.
+
 ## Local development
 
 ```sh

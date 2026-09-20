@@ -3,7 +3,7 @@ import './site-header.css';
 export function SiteHeader({ active }: { active: 'wheel' | 'leaderboard' }) {
   return <header className="site-header">
     <a className="site-brand" href="/" aria-label="Snack Overflow George home">
-      <span className="site-brand-mark" aria-hidden="true">✳</span>
+      <img className="site-brand-mark" src="/companion-signal.svg" width="44" height="44" alt="" />
       <span>SNACK OVERFLOW<br />GEORGE</span>
     </a>
     <nav className="site-nav" aria-label="Main navigation">
