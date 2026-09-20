@@ -20,9 +20,8 @@ npm install
 npm run dev
 ```
 
-Open the URL printed by Vite. The wheel and leaderboard work without credentials.
-The submission API requires Vercel Functions (`vercel dev`) plus the server-only
-`GITHUB_TOKEN` described below; Vite alone does not run the API endpoint.
+Open the URL printed by Vite. The wheel, leaderboard, and GitHub issue handoff
+work without site credentials or a server-side function.
 
 ## Data and routes
 
@@ -42,11 +41,11 @@ The submission API requires Vercel Functions (`vercel dev`) plus the server-only
   source-attributed excerpts, refreshed when this script is run. Run it before
   publishing leaderboard changes; the GitHub README remains the full source.
 - The leaderboard's “Submit a harness” form asks for a public GitHub repo,
-  short description, and optional contact. Its Vercel Function sends a private
-  issue to `georgewangyu/audience-private-intake`. No project is added
-  automatically. The form does not accept images.
-- Browser state is local only. The submission sends only the entered fields to
-  the server-side issue creator; no analytics are collected by the app.
+  short description, and optional public credit. It opens a prefilled issue in
+  `georgewangyu/JarvisAIGeorge`. The visitor must sign in to GitHub and post it
+  there; the issue is public. No project is added automatically. The form does
+  not accept images.
+- Browser state is local only. The app has no submission API or analytics.
 
 ## Verification
 
@@ -65,20 +64,10 @@ npm run sync:readmes
 The sync uses GitHub's public API. Optionally set `GITHUB_TOKEN` for a higher
 API rate limit; the token is never bundled into the site.
 
-Deployment is a Vite build plus one Vercel Function. The canonical domain is
+Deployment is a static Vite build. The canonical domain is
 `buildwheel.snackoverflowgeorge.com`; the default Vercel project host redirects
-to it. Set `GITHUB_TOKEN` as a server-side Vercel environment variable for
-preview and production. Use a fine-grained GitHub token scoped only to
-`georgewangyu/audience-private-intake` with Issues read/write permission.
-Publish a Vercel WAF rule limiting `POST /api/submit-harness` by IP (for
-example, three requests per ten minutes), then set the server-only
-`SUBMISSION_RATE_LIMIT_READY=1`. The endpoint refuses to create issues until
-both controls are configured. Vercel may charge for rate-limit usage above its
-included allowance; review pricing before enabling the rule.
-The endpoint creates private issues labeled `source-repo:build-wheel`,
-`type:submit-harness`, `status:needs-triage`, and `visibility:private`; the
-source is also in the title and body. Without the token, submissions fail
-closed with an unavailable message. Do not use a broad personal CLI token.
+to it. Harness suggestions are composed and posted through GitHub's own public
+issue UI, so there is no submission credential or Vercel Function to configure.
 
 There is no automatic README refresh job. Run `npm run sync:readmes` when
 updating the board or before a release, then commit the generated snapshots.

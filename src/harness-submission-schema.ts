@@ -1,3 +1,5 @@
+import { harnessIssueUrl, MAX_HARNESS_ISSUE_URL_LENGTH } from './harness-submission-url.ts';
+
 export type HarnessSubmission = {
   name: string;
   repository: string;
@@ -21,7 +23,9 @@ export function parseHarnessSubmission(value: unknown): HarnessSubmission | null
     if (url.protocol !== 'https:' || url.hostname !== 'github.com' || url.search || url.hash) return null;
     const segments = url.pathname.replace(/\/$/, '').split('/').filter(Boolean);
     if (segments.length !== 2 || segments.some((part) => !/^[a-zA-Z0-9_.-]+$/.test(part))) return null;
-    return { name, repository: `https://github.com/${segments[0].toLowerCase()}/${segments[1].toLowerCase()}`, reason, handle, website };
+    const submission = { name, repository: `https://github.com/${segments[0].toLowerCase()}/${segments[1].toLowerCase()}`, reason, handle, website };
+    if (harnessIssueUrl(submission).length > MAX_HARNESS_ISSUE_URL_LENGTH) return null;
+    return submission;
   } catch {
     return null;
   }
