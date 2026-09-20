@@ -9,6 +9,7 @@ export function SiteHeader({ active }: { active: 'wheel' | 'leaderboard' }) {
     <nav className="site-nav" aria-label="Main navigation">
       <a className={active === 'wheel' ? 'is-active' : undefined} aria-current={active === 'wheel' ? 'page' : undefined} href="/">Build Wheel</a>
       <a className={active === 'leaderboard' ? 'is-active' : undefined} aria-current={active === 'leaderboard' ? 'page' : undefined} href="/leaderboard">Harness leaderboard</a>
+      <a href="/leaderboard#submit-harness">Submit a harness</a>
     </nav>
     <div className="site-creator">
       <p>BUILT BY <a href="https://www.instagram.com/snackoverflowgeorge/" target="_blank" rel="noopener noreferrer">@SNACKOVERFLOWGEORGE ↗</a></p>

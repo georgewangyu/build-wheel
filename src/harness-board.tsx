@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { fetchStarCounts, readCachedStars } from './harness-stars.ts';
 import { githubUrl, harnesses, rankHarnesses, SNAPSHOT_DATE, type Harness, type StarCounts } from './harnesses.ts';
 import { SiteHeader } from './site-header.tsx';
+import { HarnessSubmissionForm } from './harness-submission.tsx';
+import { HarnessReadme } from './harness-readme.tsx';
 import './harness-board.css';
 
 const number = new Intl.NumberFormat('en-US');
@@ -41,7 +43,7 @@ function GeorgeSpotlight({ item, stars, rank }: { item: Harness; stars: number; 
       <p className="board-kicker">THE BUILDER'S HARNESS</p>
       <h2><a href={`/harnesses/${item.slug}`}>{item.name} <span aria-hidden="true">↗</span></a></h2>
     </div>
-    <p className="spotlight-description">Chasing OpenClaw, one public step at a time. A FirstMate fork, still early.</p>
+    <p className="spotlight-description">Chasing OpenClaw, one public step at a time.</p>
     <div className="spotlight-actions"><span className="spotlight-state"><StarIcon /> {number.format(stars)} STARS · #{rank}</span><a className="spotlight-link" href={githubUrl(item.repo)} target="_blank" rel="noopener noreferrer">Star on GitHub ↗</a></div>
   </aside>;
 }
@@ -50,6 +52,12 @@ export function HarnessBoard({ selected }: { selected?: Harness }) {
   const initial = readCachedStars();
   const [counts, setCounts] = useState<StarCounts>(initial?.counts ?? {});
   const [fetchedAt, setFetchedAt] = useState<number | null>(initial?.fetchedAt ?? null);
+
+  useEffect(() => {
+    if (selected || window.location.hash !== '#submit-harness') return;
+    const timer = window.setTimeout(() => document.getElementById('submit-harness')?.scrollIntoView(), 80);
+    return () => window.clearTimeout(timer);
+  }, [selected]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -81,12 +89,12 @@ export function HarnessBoard({ selected }: { selected?: Harness }) {
           <p className="board-kicker">#{String(selectedRank).padStart(2, '0')} ON THE BOARD <span className="detail-divider">/</span> {selected.kind.toUpperCase()}</p>
           <h1>{selected.name}</h1>
           <p>{selected.description}</p>
-          <div className="detail-highlights"><p className="board-kicker">FROM THE PROJECT README & DOCS</p><ul>{selected.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul></div>
+          <div className="detail-highlights"><p className="board-kicker">AT A GLANCE</p><ul>{selected.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul></div>
           <div className="detail-meta"><span>BY {selected.maker.toUpperCase()}</span><span><StarIcon /> {number.format(counts[selected.repo] ?? selected.snapshotStars)} GITHUB STARS</span></div>
           <div className="detail-actions"><a className="detail-star" href={githubUrl(selected.repo)} target="_blank" rel="noopener noreferrer"><StarIcon /> Star on GitHub ↗</a><a className="detail-readme" href={`${githubUrl(selected.repo)}#readme`} target="_blank" rel="noopener noreferrer">Explore the full README ↗</a></div>
         </div>
       </div>
-      <section className="detail-note"><p className="board-kicker">THE SOURCE</p><p>This is a short guide to the project, not a copy of its documentation. For installation, limitations, and current features, go straight to the creators’ README.</p><a href={`${githubUrl(selected.repo)}#readme`} target="_blank" rel="noopener noreferrer">github.com/{selected.repo} ↗</a></section>
+      <HarnessReadme item={selected} />
     </main> : <main className="board-main">
       <section className="board-intro">
         <div className="intro-copy"><p className="board-kicker"><span className="kicker-line" /> THE HARNESS RACE / VOL. 01</p><h1>The agent<br /><em>arena<span>.</span></em></h1><p className="intro-deck">The tools giving AI the hands to actually build. Ranked by the most public signal we have: GitHub stars.</p></div>
@@ -94,6 +102,7 @@ export function HarnessBoard({ selected }: { selected?: Harness }) {
       </section>
       <GeorgeSpotlight item={george} stars={counts[george.repo] ?? george.snapshotStars} rank={georgeRank} />
       <section className="leaderboard" aria-labelledby="leaderboard-title"><div className="board-section-head"><div><p className="board-kicker">01 / THE FIELD</p><h2 id="leaderboard-title">The leaderboard<span className="title-star">✳</span></h2></div><LiveStatus fetchedAt={fetchedAt} liveCount={Object.keys(counts).length} /></div><div className="rank-list">{visible.map((item, index) => <RankRow key={item.slug} item={item} index={(page - 1) * pageSize + index} rank={(page - 1) * pageSize + index + 1} stars={counts[item.repo] ?? item.snapshotStars} />)}</div><nav className="board-pagination" aria-label="Leaderboard pages"><span>SHOWING {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, ranked.length)} OF {ranked.length}</span><div>{page > 1 ? <a href={page === 2 ? '/leaderboard' : `/leaderboard?page=${page - 1}`}>← Previous</a> : <span className="is-disabled">← Previous</span>}{Array.from({ length: pageCount }, (_, index) => <a key={index} href={index === 0 ? '/leaderboard' : `/leaderboard?page=${index + 1}`} aria-current={page === index + 1 ? 'page' : undefined}>{index + 1}</a>)}{page < pageCount ? <a href={`/leaderboard?page=${page + 1}`}>Next →</a> : <span className="is-disabled">Next →</span>}</div></nav><p className="board-method">Stars show public interest, not capability or quality. This is a curated field of coding agents and adjacent orchestration tools—not a claim that they all do the same job. <a href="https://docs.github.com/en/rest/repos/repos#get-a-repository" target="_blank" rel="noopener noreferrer">How counts are sourced ↗</a></p></section>
+      <HarnessSubmissionForm />
     </main>}
     <footer className="board-footer"><span>MADE BY <a href="https://www.instagram.com/snackoverflowgeorge/" target="_blank" rel="noopener noreferrer">@SNACKOVERFLOWGEORGE</a></span><span>THE WHEEL KEEPS TURNING <span aria-hidden="true">✳</span></span></footer>
   </div>;
