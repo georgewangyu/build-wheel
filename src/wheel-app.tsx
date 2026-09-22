@@ -5,6 +5,7 @@ import { CREATOR_TAKE, FIRST_VIDEO_SLUG, randomIndex, resultUrl } from './wheel-
 import { playResult, playTick, playTimerAlarm } from './spin-sound.ts';
 import { SPEECH_SECONDS, secondsRemaining, speechPhase, timerLabel } from './timer.ts';
 import { SiteHeader } from './site-header.tsx';
+import { ProjectPublish } from './project-publish.tsx';
 
 type Category = Topic['category'] | 'All ideas';
 
@@ -222,6 +223,7 @@ export function BuildWheel() {
           <p className="fairness-note">{creatorTake ? 'ONE MINUTE TO EXPLAIN · SEVEN DAYS TO BUILD' : `${selected ? 'NEXT SPIN' : 'RANDOM DRAW'} · EQUAL CHANCE AMONG ${pool.length} TOPICS`}</p>
           <button type="button" className="sound-toggle" aria-pressed={soundOn} onClick={toggleSound}>{soundOn ? 'Sound on' : 'Sound off'}</button>
         </div>
+        {selected && topics.some((topic) => topic.slug === selected.slug) && <ProjectPublish topic={selected} />}
       </main>
 
       <footer className="footer-line">

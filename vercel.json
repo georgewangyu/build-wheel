@@ -3,7 +3,8 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/leaderboard", "destination": "/index.html" },
-    { "source": "/harnesses/:slug", "destination": "/index.html" }
+    { "source": "/harnesses/:slug", "destination": "/index.html" },
+    { "source": "/projects/:path*", "destination": "/index.html" }
   ],
   "redirects": [
     {
