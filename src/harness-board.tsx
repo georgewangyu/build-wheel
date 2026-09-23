@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { fetchStarCounts, readCachedStars } from './harness-stars.ts';
-import { githubUrl, harnesses, rankHarnesses, SNAPSHOT_DATE, type Harness, type StarCounts } from './harnesses.ts';
+import { fetchStarCounts, readCachedStars, starRepositories } from './harness-stars.ts';
+import { githubUrl, harnesses, jarvisDesktop, rankHarnesses, SNAPSHOT_DATE, type Harness, type StarCounts } from './harnesses.ts';
 import { SiteHeader } from './site-header.tsx';
 import { HarnessSubmissionForm } from './harness-submission.tsx';
 import { HarnessReadme } from './harness-readme.tsx';
@@ -21,7 +21,7 @@ function HarnessMark({ item, detail = false }: { item: Harness; detail?: boolean
 
 function LiveStatus({ fetchedAt, liveCount }: { fetchedAt: number | null; liveCount: number }) {
   const label = fetchedAt
-    ? liveCount === harnesses.length ? `GitHub stars · updated ${new Date(fetchedAt).toLocaleString()}` : `GitHub stars · partial live data; remaining counts from ${SNAPSHOT_DATE}`
+    ? liveCount === starRepositories.length ? `GitHub stars · updated ${new Date(fetchedAt).toLocaleString()}` : `GitHub stars · partial live data; remaining counts from published snapshots`
     : `GitHub stars · snapshot from ${SNAPSHOT_DATE}`;
   return <p className="board-status"><span className={fetchedAt ? 'status-dot is-live' : 'status-dot'} />{label}</p>;
 }
@@ -36,15 +36,30 @@ function RankRow({ item, rank, stars, index }: { item: Harness; rank: number; st
   </a>;
 }
 
-function GeorgeSpotlight({ item, stars, rank }: { item: Harness; stars: number; rank: number }) {
+function FeaturedProject({ name, kind, repo, description, stars }: { name: string; kind: string; repo: string; description: string; stars: number }) {
+  const url = githubUrl(repo);
+  return <div className="spotlight-project">
+    <div className="spotlight-project-copy">
+      <span>{kind}</span>
+      <a href={url} target="_blank" rel="noopener noreferrer">{name} <span aria-hidden="true">↗</span></a>
+      <small>{description}</small>
+    </div>
+    <a className="spotlight-star-pill" href={url} target="_blank" rel="noopener noreferrer" aria-label={`Star ${name} on GitHub`}><StarIcon /> {number.format(stars)} {stars === 1 ? 'STAR' : 'STARS'} <span aria-hidden="true">·</span> GITHUB ↗</a>
+  </div>;
+}
+
+function GeorgeSpotlight({ harness, counts }: { harness: Harness; counts: StarCounts }) {
   return <aside className="george-spotlight">
     <span className="spotlight-symbol" aria-hidden="true"><img src="/companion-signal.svg" alt="" /></span>
     <div className="spotlight-copy">
-      <p className="board-kicker">THE BUILDER'S HARNESS</p>
-      <h2><a href={`/harnesses/${item.slug}`}>{item.name} <span aria-hidden="true">↗</span></a></h2>
+      <p className="board-kicker">GEORGE'S JARVIS BUILDS</p>
+      <h2>Two versions. One assistant.</h2>
     </div>
-    <p className="spotlight-description">Chasing OpenClaw, one public step at a time.</p>
-    <div className="spotlight-actions"><span className="spotlight-state"><StarIcon /> {number.format(stars)} STARS · #{rank}</span><a className="spotlight-link" href={githubUrl(item.repo)} target="_blank" rel="noopener noreferrer">Star on GitHub ↗</a></div>
+    <p className="spotlight-description">Chasing OpenClaw, one public step at a time. The agent harness and the macOS desktop experience, built in public.</p>
+    <div className="spotlight-projects">
+      <FeaturedProject name={harness.name} kind="HARNESS VERSION" repo={harness.repo} description="The orchestration engine and agent workflow." stars={counts[harness.repo] ?? harness.snapshotStars} />
+      <FeaturedProject name={jarvisDesktop.name} kind="macOS DESKTOP VERSION" repo={jarvisDesktop.repo} description={jarvisDesktop.description} stars={counts[jarvisDesktop.repo] ?? jarvisDesktop.snapshotStars} />
+    </div>
   </aside>;
 }
 
@@ -71,7 +86,6 @@ export function HarnessBoard({ selected }: { selected?: Harness }) {
 
   const ranked = rankHarnesses(counts);
   const george = harnesses.find((item) => item.slug === 'jarvis-ai-george')!;
-  const georgeRank = ranked.findIndex((item) => item.slug === george.slug) + 1;
   const selectedRank = selected ? ranked.findIndex((item) => item.slug === selected.slug) + 1 : 0;
   const pageSize = 10;
   const pageCount = Math.ceil(ranked.length / pageSize);
@@ -100,7 +114,7 @@ export function HarnessBoard({ selected }: { selected?: Harness }) {
         <div className="intro-copy"><p className="board-kicker"><span className="kicker-line" /> THE HARNESS RACE / VOL. 01</p><h1>The agent<br /><em>arena<span>.</span></em></h1><p className="intro-deck">The tools giving AI the hands to actually build. Ranked by the most public signal we have: GitHub stars.</p></div>
         <div className="intro-art" aria-hidden="true"><span className="art-ring art-ring-one" /><span className="art-ring art-ring-two" /><span className="art-ring art-ring-three" /><span className="art-center">✳</span><span className="art-label art-label-top">BUILD / BREAK / REPEAT</span><span className="art-label art-label-bottom">THE FIELD IS MOVING</span></div>
       </section>
-      <GeorgeSpotlight item={george} stars={counts[george.repo] ?? george.snapshotStars} rank={georgeRank} />
+      <GeorgeSpotlight harness={george} counts={counts} />
       <section className="leaderboard" aria-labelledby="leaderboard-title"><div className="board-section-head"><div><p className="board-kicker">01 / THE FIELD</p><h2 id="leaderboard-title">The leaderboard<span className="title-star">✳</span></h2></div><LiveStatus fetchedAt={fetchedAt} liveCount={Object.keys(counts).length} /></div><div className="rank-list">{visible.map((item, index) => <RankRow key={item.slug} item={item} index={(page - 1) * pageSize + index} rank={(page - 1) * pageSize + index + 1} stars={counts[item.repo] ?? item.snapshotStars} />)}</div><nav className="board-pagination" aria-label="Leaderboard pages"><span>SHOWING {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, ranked.length)} OF {ranked.length}</span><div>{page > 1 ? <a href={page === 2 ? '/leaderboard' : `/leaderboard?page=${page - 1}`}>← Previous</a> : <span className="is-disabled">← Previous</span>}{Array.from({ length: pageCount }, (_, index) => <a key={index} href={index === 0 ? '/leaderboard' : `/leaderboard?page=${index + 1}`} aria-current={page === index + 1 ? 'page' : undefined}>{index + 1}</a>)}{page < pageCount ? <a href={`/leaderboard?page=${page + 1}`}>Next →</a> : <span className="is-disabled">Next →</span>}</div></nav><p className="board-method">Stars show public interest, not capability or quality. This is a curated field of coding agents and adjacent orchestration tools—not a claim that they all do the same job. <a href="https://docs.github.com/en/rest/repos/repos#get-a-repository" target="_blank" rel="noopener noreferrer">How counts are sourced ↗</a></p></section>
       <HarnessSubmissionForm />
     </main>}

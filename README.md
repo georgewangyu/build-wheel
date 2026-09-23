@@ -53,6 +53,9 @@ work without site credentials or a server-side function.
   `georgewangyu/JarvisAIGeorge`. The visitor must sign in to GitHub and post it
   there; the issue is public. No project is added automatically. The form does
   not accept images.
+- The featured Jarvis block links the public agent-harness and macOS desktop
+  repositories as one product family. Both names and star pills open GitHub;
+  only the harness remains part of the ranked field.
 - Browser state is local only. The app has no submission API or analytics.
 
 ## Project flywheel

@@ -1,7 +1,9 @@
-import { harnesses, type StarCounts } from './harnesses.ts';
+import { harnesses, jarvisDesktop, type StarCounts } from './harnesses.ts';
 
-const CACHE_KEY = 'build-wheel:harness-stars:v3';
+const CACHE_KEY = 'build-wheel:harness-stars:v4';
 const CACHE_MAX_AGE_MS = 20 * 60 * 1000;
+
+export const starRepositories = [...harnesses.map(({ repo }) => repo), jarvisDesktop.repo];
 
 type CachedStars = { fetchedAt: number; counts: StarCounts };
 
@@ -22,7 +24,7 @@ export async function fetchStarCounts(signal?: AbortSignal): Promise<CachedStars
   const cached = readCachedStars();
   if (cached) return cached;
 
-  const results = await Promise.allSettled(harnesses.map(async ({ repo }) => {
+  const results = await Promise.allSettled(starRepositories.map(async (repo) => {
     const response = await fetch(`https://api.github.com/repos/${repo}`, {
       headers: { Accept: 'application/vnd.github+json' },
       signal,

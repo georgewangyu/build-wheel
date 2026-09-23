@@ -11,6 +11,14 @@ export type Harness = {
   snapshotStars: number;
 };
 
+export const jarvisDesktop = {
+  name: 'Jarvis AI George Desktop',
+  repo: 'georgewangyu/JarvisAIGeorgeDesktop',
+  kind: 'macOS desktop',
+  description: 'An early public macOS work-in-progress; its README still reflects the Hermes upstream project.',
+  snapshotStars: 1,
+} as const;
+
 // Public repository stars checked on 2026-09-19. The live GitHub API refreshes these in the browser.
 export const SNAPSHOT_DATE = '2026-09-19';
 

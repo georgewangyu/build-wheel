@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
-import { githubUrl, harnesses, rankHarnesses } from '../src/harnesses.ts';
+import { githubUrl, harnesses, jarvisDesktop, rankHarnesses } from '../src/harnesses.ts';
+import { starRepositories } from '../src/harness-stars.ts';
 
 test('harness leaderboard contains only unique public GitHub repositories', () => {
   assert.ok(harnesses.length >= 25);
@@ -19,6 +20,10 @@ test('harness leaderboard contains only unique public GitHub repositories', () =
   assert.equal(jarvis?.snapshotStars, 0);
   assert.equal(jarvis?.slug, 'jarvis-ai-george');
   assert.equal(rankHarnesses().at(-1)?.slug, 'jarvis-ai-george');
+  assert.equal(jarvisDesktop.repo, 'georgewangyu/JarvisAIGeorgeDesktop');
+  assert.equal(jarvisDesktop.snapshotStars, 1);
+  assert.ok(starRepositories.includes(jarvisDesktop.repo));
+  assert.equal(new Set(starRepositories).size, starRepositories.length);
 });
 
 test('ranking follows live counts and leaves the curated source order unchanged', () => {
