@@ -32,3 +32,12 @@ test('ranking follows live counts and leaves the curated source order unchanged'
   assert.equal(ranked[0].slug, 'kiro-crew');
   assert.deepEqual(harnesses.map((item) => item.slug), original);
 });
+
+test('desktop companion stays out of the harness ranking but receives star refreshes', () => {
+  const ranked = rankHarnesses({ [jarvisDesktop.repo]: Number.MAX_SAFE_INTEGER });
+
+  assert.ok(!harnesses.some((item) => item.repo === jarvisDesktop.repo));
+  assert.ok(!ranked.some((item) => item.repo === jarvisDesktop.repo));
+  assert.ok(ranked.some((item) => item.repo === 'georgewangyu/JarvisAIGeorge'));
+  assert.ok(starRepositories.includes(jarvisDesktop.repo));
+});
